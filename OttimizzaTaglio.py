@@ -63,7 +63,7 @@ st.write("Numero minimo di aste usate:", pulp.value(model.objective))
 
 for i in range(max_rods):
     if pulp.value(y[i]) > 0:
-        st.write(f"**Asta {i}**:")
+        st.write(f"**Asta {i+1}**:")
 
         # Calcoliamo la lunghezza usata e stampiamo i dettagli di ogni taglio
         used_length = 0
