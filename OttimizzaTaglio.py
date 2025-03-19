@@ -57,16 +57,26 @@ if st.button("Calcola Soluzione"):
     # Risolviamo il modello
     model.solve()
 
-    st.subheader("Risultati")
-    st.write("Stato della soluzione:", pulp.LpStatus[model.status])
-    st.write("Numero minimo di aste usate:", pulp.value(model.objective))
+st.subheader("Risultati")
+st.write("Stato della soluzione:", pulp.LpStatus[model.status])
+st.write("Numero minimo di aste usate:", pulp.value(model.objective))
 
-    for i in range(max_rods):
-        if pulp.value(y[i]) > 0:
-            cuts_in_rod = {j: int(pulp.value(x[(i, j)])) for j in cut_lengths}
-            used_length = sum(cut_lengths[j] * pulp.value(x[(i, j)]) for j in cut_lengths)
-            slack = rod_length - used_length
-            st.write(f"**Asta {i}**:")
-            st.write(f"- Tagli: {cuts_in_rod}")
-            st.write(f"- Lunghezza usata: {used_length} cm")
-            st.write(f"- Scarto: {slack} cm")
+for i in range(max_rods):
+    if pulp.value(y[i]) > 0:
+        st.write(f"**Asta {i}**:")
+
+        # Calcoliamo la lunghezza usata e stampiamo i dettagli di ogni taglio
+        used_length = 0
+        st.write("- Tagli effettuati:")
+        for j in cut_lengths:
+            num_cuts = int(pulp.value(x[(i, j)]))
+            if num_cuts > 0:
+                # Qui mostriamo la lunghezza del taglio e il numero di pezzi
+                st.write(f"  - {cut_lengths[j]} cm: {num_cuts} pezzi")
+                used_length += cut_lengths[j] * num_cuts
+
+        # Calcoliamo lo scarto
+        slack = rod_length - used_length
+        st.write(f"- Lunghezza usata: {used_length} cm")
+        st.write(f"- Scarto: {slack} cm")
+
